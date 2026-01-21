@@ -192,7 +192,7 @@
   const _supabaseKey = 'sb_publishable_QW-89_uYQnGSDjEJnqR9jw_Nq7S3nAE';
   const _supabase = supabase.createClient(_supabaseUrl, _supabaseKey);
 
-  // Función para guardar testimonios en la tabla de Supabase
+  // Función para guardar testimonios (corregida a minúsculas)
   async function enviarTestimonio() {
     const nombreInput = document.getElementById('nombre');
     const mensajeInput = document.getElementById('mensaje');
@@ -203,7 +203,7 @@
     if (!nombre || !mensaje) return alert("Por favor, llena ambos campos");
 
     const { error } = await _supabase
-      .from('Testimonios')
+      .from('testimonios')
       .insert([{ nombre, mensaje, fecha }]);
 
     if (error) {
@@ -216,10 +216,10 @@
     }
   }
 
-  // Función para leer los testimonios de la base de datos
+  // Función para leer testimonios (corregida a minúsculas)
   async function cargarTestimonios() {
     const { data, error } = await _supabase
-      .from('Testimonios')
+      .from('testimonios')
       .select('*')
       .order('id', { ascending: false });
 
@@ -237,5 +237,6 @@
   // Cargar automáticamente al abrir la página
   window.onload = cargarTestimonios;
 </script>
-
+ 
 </html>
+

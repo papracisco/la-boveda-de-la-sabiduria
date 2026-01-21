@@ -184,4 +184,58 @@
         window.onload = cargarTestimonios;
     </script>
 </body>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+  // Configuración con tus credenciales reales
+  const _supabaseUrl = 'https://bgcrxdhetssoedlzwjsx.supabase.co';
+  const _supabaseKey = 'sb_publishable_QW-89_uYQnGSDjEJnqR9jw_Nq7S3nAE';
+  const _supabase = supabase.createClient(_supabaseUrl, _supabaseKey);
+
+  // Función para guardar testimonios en la tabla de Supabase
+  async function enviarTestimonio() {
+    const nombreInput = document.getElementById('nombre');
+    const mensajeInput = document.getElementById('mensaje');
+    const nombre = nombreInput.value;
+    const mensaje = mensajeInput.value;
+    const fecha = new Date().toLocaleDateString();
+
+    if (!nombre || !mensaje) return alert("Por favor, llena ambos campos");
+
+    const { error } = await _supabase
+      .from('Testimonios')
+      .insert([{ nombre, mensaje, fecha }]);
+
+    if (error) {
+      console.error('Error al guardar:', error);
+      alert('Error al guardar: ' + error.message);
+    } else {
+      nombreInput.value = '';
+      mensajeInput.value = '';
+      cargarTestimonios();
+    }
+  }
+
+  // Función para leer los testimonios de la base de datos
+  async function cargarTestimonios() {
+    const { data, error } = await _supabase
+      .from('Testimonios')
+      .select('*')
+      .order('id', { ascending: false });
+
+    if (data) {
+      const contenedor = document.getElementById('testimonios-container');
+      contenedor.innerHTML = data.map(t => `
+        <div class="testimonio-card p-4 rounded mb-4 border-l-4 border-oro bg-black/20">
+          <p class="text-oro font-bold">${t.nombre} <span class="text-xs text-gray-400">(${t.fecha})</span></p>
+          <p class="italic text-gray-200">"${t.mensaje}"</p>
+        </div>
+      `).join('');
+    }
+  }
+
+  // Cargar automáticamente al abrir la página
+  window.onload = cargarTestimonios;
+</script>
+
 </html>

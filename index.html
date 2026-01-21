@@ -187,56 +187,49 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script>
-  // Configuración con tus credenciales reales
   const _supabaseUrl = 'https://bgcrxdhetssoedlzwjsx.supabase.co';
   const _supabaseKey = 'sb_publishable_QW-89_uYQnGSDjEJnqR9jw_Nq7S3nAE';
   const _supabase = supabase.createClient(_supabaseUrl, _supabaseKey);
 
-  // Función para guardar testimonios (corregida a minúsculas)
   async function enviarTestimonio() {
-    const nombreInput = document.getElementById('nombre');
-    const mensajeInput = document.getElementById('mensaje');
-    const nombre = nombreInput.value;
-    const mensaje = mensajeInput.value;
+    const nombre = document.getElementById('nombre').value;
+    const mensaje = document.getElementById('mensaje').value;
     const fecha = new Date().toLocaleDateString();
 
     if (!nombre || !mensaje) return alert("Por favor, llena ambos campos");
 
     const { error } = await _supabase
-      .from('testimonios')
+      .from('Testimonios')
       .insert([{ nombre, mensaje, fecha }]);
 
     if (error) {
-      console.error('Error al guardar:', error);
-      alert('Error al guardar: ' + error.message);
+      alert('Error: ' + error.message);
     } else {
-      nombreInput.value = '';
-      mensajeInput.value = '';
+      document.getElementById('nombre').value = '';
+      document.getElementById('mensaje').value = '';
       cargarTestimonios();
     }
   }
 
-  // Función para leer testimonios (corregida a minúsculas)
   async function cargarTestimonios() {
     const { data, error } = await _supabase
-      .from('testimonios')
+      .from('Testimonios')
       .select('*')
       .order('id', { ascending: false });
 
     if (data) {
       const contenedor = document.getElementById('testimonios-container');
       contenedor.innerHTML = data.map(t => `
-        <div class="testimonio-card p-4 rounded mb-4 border-l-4 border-oro bg-black/20">
+        <div class="testimonio-card p-4 rounded mb-4 border-l-4 border-oro bg-black/20 text-white">
           <p class="text-oro font-bold">${t.nombre} <span class="text-xs text-gray-400">(${t.fecha})</span></p>
-          <p class="italic text-gray-200">"${t.mensaje}"</p>
+          <p class="italic">"${t.mensaje}"</p>
         </div>
       `).join('');
     }
   }
-
-  // Cargar automáticamente al abrir la página
   window.onload = cargarTestimonios;
 </script>
  
 </html>
+
 

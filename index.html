@@ -187,13 +187,19 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script>
+  // Configuración con tus credenciales reales
   const _supabaseUrl = 'https://bgcrxdhetssoedlzwjsx.supabase.co';
   const _supabaseKey = 'sb_publishable_QW-89_uYQnGSDjEJnqR9jw_Nq7S3nAE';
   const _supabase = supabase.createClient(_supabaseUrl, _supabaseKey);
 
+  // Función para guardar testimonios usando TUS IDs reales
   async function enviarTestimonio() {
-    const nombre = document.getElementById('nombre').value;
-    const mensaje = document.getElementById('mensaje').value;
+    // Usamos los IDs que tienes en tu HTML: inputNombre e inputMensaje
+    const nombreInput = document.getElementById('inputNombre');
+    const mensajeInput = document.getElementById('inputMensaje');
+    
+    const nombre = nombreInput.value;
+    const mensaje = mensajeInput.value;
     const fecha = new Date().toLocaleDateString();
 
     if (!nombre || !mensaje) return alert("Por favor, llena ambos campos");
@@ -203,14 +209,16 @@
       .insert([{ nombre, mensaje, fecha }]);
 
     if (error) {
-      alert('Error: ' + error.message);
+      console.error('Error al guardar:', error);
+      alert('Error al guardar: ' + error.message);
     } else {
-      document.getElementById('nombre').value = '';
-      document.getElementById('mensaje').value = '';
+      nombreInput.value = '';
+      mensajeInput.value = '';
       cargarTestimonios();
     }
   }
 
+  // Función para leer los testimonios usando TU ID: listaTestimonios
   async function cargarTestimonios() {
     const { data, error } = await _supabase
       .from('Testimonios')
@@ -218,18 +226,22 @@
       .order('id', { ascending: false });
 
     if (data) {
-      const contenedor = document.getElementById('testimonios-container');
+      // Usamos el ID de tu div: listaTestimonios
+      const contenedor = document.getElementById('listaTestimonios');
       contenedor.innerHTML = data.map(t => `
         <div class="testimonio-card p-4 rounded mb-4 border-l-4 border-oro bg-black/20 text-white">
           <p class="text-oro font-bold">${t.nombre} <span class="text-xs text-gray-400">(${t.fecha})</span></p>
-          <p class="italic">"${t.mensaje}"</p>
+          <p class="italic text-gray-200">"${t.mensaje}"</p>
         </div>
       `).join('');
     }
   }
+
+  // Cargar automáticamente al abrir la página
   window.onload = cargarTestimonios;
 </script>
  
 </html>
+
 
 
